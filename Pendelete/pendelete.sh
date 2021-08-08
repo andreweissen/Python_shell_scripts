@@ -593,13 +593,13 @@ def main():
     # Unpack the input list
     username, password, wiki_api, template, category = input_data
 
-    # Create new Controller instance for interaction with the API
-    controller = Controller(wiki_api, requests.Session())
-
     # Ensure URL points to valid Fandom wiki's api.php resource
     if not is_fandom_wiki_api_php(wiki_api):
         log_msg(lang["eURL"], sys.stderr)
         sys.exit(1)
+
+    # Create new Controller instance for interaction with the API
+    controller = Controller(wiki_api, requests.Session())
 
     # Definitions
     category_members = []
