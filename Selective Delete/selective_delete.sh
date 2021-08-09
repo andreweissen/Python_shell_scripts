@@ -604,7 +604,8 @@ def log_msg(message_text, text_io=sys.stdout):
     text_io.flush()
 
 
-def should_delete(prompt_message, action_yes="y", action_no="n"):
+def should_delete(prompt_message, action_yes="y", action_no="n",
+                  action_exit="q"):
     """
     The ``should_delete`` utility function serves to prompt the user to enter an
     accepted value that denotes whether or not to proceed with the given
@@ -616,8 +617,10 @@ def should_delete(prompt_message, action_yes="y", action_no="n"):
             displayed with every prompt iteration
         :param action_yes: An optional formal parameter denoting what the user
             should enter to proceed with the operation
-        :param action_no: An optional formal parameter denotign what the user
+        :param action_no: An optional formal parameter denoting what the user
             should enter to not proceed with the operation
+        :param action_exit: An optional formal parameter denoting what the user
+            should enter to exit from the application altogether
         :return: A status boolean is returned that indicates whether the user
             intends to proceed with the deletion operation or not.
     """
@@ -627,10 +630,12 @@ def should_delete(prompt_message, action_yes="y", action_no="n"):
         sys.stdout.flush()
         action = sys.stdin.readline().rstrip()
 
-        if action == action_yes:
+        if action.lower() == action_yes.lower():
             return True
-        elif action == action_no:
+        elif action.lower() == action_no.lower():
             return False
+        elif action.lower() == action_exit.lower():
+            sys.exit(1)
         else:
             continue
 
@@ -663,6 +668,7 @@ def main():
     lang = {
         "pIntro": "Enter username, password, link to /api.php, target "
                   + "template, and deletion category",
+        "pEditSummary": "Enter edit summary: ",
         "pAreYouSure": "Delete? (y/n): ",
         "eNoData": "Error: No input data entered",
         "eMissingData": "Error: Missing input data",
@@ -702,6 +708,11 @@ def main():
         input_data = [arg.rstrip() for arg in sys.stdin.readlines()]
     else:
         sys.exit(1)
+
+    # Prompt for edit summary
+    sys.stdout.write(lang["pEditSummary"])
+    sys.stdout.flush()
+    edit_summary = sys.stdin.readline().rstrip()
 
     # Remove any empty strings from the outset to catch empty input
     input_data = list(filter(None, input_data))
@@ -858,15 +869,15 @@ def main():
             log_msg(lang["eWrongTagger"].replace("$1", last_editor)
                     .replace("$2", member).replace("$3", page_creator),
                     sys.stderr)
-            time.sleep(interval)
-            continue
 
         # If the tagging user is the page creator...
         else:
             # ...log message and proceed with deletion operation
             log_msg(lang["sCreatorTagged"].replace("$1", page_creator)
                     .replace("$2", member), sys.stdout)
-            time.sleep(interval)
+
+        # Wait for it...
+        time.sleep(interval)
 
         # Prompt user to delete or skip deletion of page
         if not should_delete(lang["pAreYouSure"]):
@@ -874,7 +885,7 @@ def main():
 
         try:
             # Attempt to delete the page and log a message if successful
-            if controller.delete_page(member):
+            if controller.delete_page(member, edit_summary):
                 log_msg(lang["sDeletedPage"].replace("$1", member), sys.stdout)
         except (requests.exceptions.HTTPError, json.decoder.JSONDecodeError):
             log_msg(lang["eDeleteAPI"].replace("$1", member), sys.stderr)
