@@ -124,6 +124,7 @@ class Controller:
                 information pertaining to the editor (name and id) and the
                 revision itself (revid and parentid)
         """
+
         revisions = revisions or []
         params = {
             "action": "query",
