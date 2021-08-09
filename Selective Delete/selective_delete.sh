@@ -1,3 +1,5 @@
+#!/usr/bin/env python
+
 """
 Selective Delete is a Python shell script based on an earlier JavaScript script
 of the same name that was created by the author back in 2016/17. Like the
