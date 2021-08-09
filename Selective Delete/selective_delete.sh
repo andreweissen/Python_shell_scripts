@@ -797,6 +797,7 @@ def main():
         last_editor = None
         last_editor_id = None
 
+        log_msg(f"----{member}----", sys.stdout)
         try:
             # Get dictionary of info pertaining to page creator user
             first_revision = controller.get_first_revision_info(member)
