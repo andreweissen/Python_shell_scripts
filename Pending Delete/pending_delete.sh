@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 
 """
-This "Pendelete" application was developed to be run as a Python shell script
+The "Pending Delete" script was developed to be run as a Python shell script
 capable of quickly and easily removing pages tagged for pending deletion if the
 deletion date posted on the page in a target template matches the present date.
 Originally a JavaScript script called "AutoDelete" that was run client-side in

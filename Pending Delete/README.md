@@ -1,6 +1,6 @@
-## Pendelete ##
+## Pending Delete ##
 
-__Pendelete__, a [portmanteau](https://en.wikipedia.org/wiki/Portmanteau) of "__Pending Delete__," is a [Python](https://en.wikipedia.org/wiki/Python_(programming_language)) [script](https://en.wikipedia.org/wiki/Scripting_language) run as a [shell script](https://en.wikipedia.org/wiki/Shell_script) that assists in automating the deletion of pages marked for pending deletion if the current date matches that of the pending deletion date provided in a special template in the wikitext markup.
+__Pending Delete__, developed from a JavaScript script of the author's previously called "AutoDelete," is a [Python](https://en.wikipedia.org/wiki/Python_(programming_language)) [script](https://en.wikipedia.org/wiki/Scripting_language) run as a [shell script](https://en.wikipedia.org/wiki/Shell_script) that assists in automating the deletion of pages marked for pending deletion if the current date matches that of the pending deletion date provided in a special template in the wikitext markup.
 
 As an example, after logging in the user via a `Special:BotPasswords` password, the script will fetch member pages existing in a category containing pages marked for eventual deletion. The script will request and search the wikitext content of each page for a certain template displaying the pending deletion date. If the current date matches the displayed deletion date, the page is deleted, though the user has to provide authorization and approve the deletion manually.
 
