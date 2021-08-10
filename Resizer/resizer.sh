@@ -7,7 +7,7 @@ directory under new names for ease of access. The author includes the script in
 his Pictures folder and invokes it in the Git Bash shell.
 """
 
-__all__ =["Resizer"]
+__all__ = ["Resizer"]
 __author__ = "Andrew Eissen"
 __version__ = "0.1"
 
