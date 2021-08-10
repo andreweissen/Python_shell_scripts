@@ -643,6 +643,7 @@ def main():
             AssertionError, KeyError):
         # ...or apply default 1500 ms value
         interval = 1.5
+    time.sleep(interval)
 
     try:
         # Grab members of deletion cat (cat holding pages marked for deletion)
@@ -656,6 +657,8 @@ def main():
             sys.exit(1)
 
     for member in category_members:
+
+        log_msg(f"----{member}----", sys.stdout)
         try:
             # Grab raw parsed wikitext markup of each page
             wikitext = controller.get_page_content(member)
@@ -665,6 +668,8 @@ def main():
         except (AssertionError, KeyError):
             log_msg(lang["eWikitextUnknown"].replace("$1", member), sys.stderr)
             continue
+        finally:
+            time.sleep(interval)
 
         # Grab deletion date displayed in transclusions of target template
         template_contents = re.findall(template_regex, wikitext)

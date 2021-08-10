@@ -778,6 +778,7 @@ def main():
             AssertionError, KeyError):
         # ...or apply default 1500 ms value
         interval = 1.5
+    time.sleep(interval)
 
     try:
         # Grab members of deletion cat (cat holding pages tagged for deletion)
