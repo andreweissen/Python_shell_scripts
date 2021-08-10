@@ -7,12 +7,12 @@ directory under new names for ease of access. The author includes the script in
 his Pictures folder and invokes it in the Git Bash shell.
 """
 
-from PIL import Image
-
+__all__ =["Resizer"]
 __author__ = "Andrew Eissen"
 __version__ = "0.1"
 
 import sys
+import PIL.Image
 
 
 class Resizer:
@@ -132,7 +132,7 @@ class Resizer:
         file = "".join(path)
 
         # May throw IOError for main to catch
-        image = Image.open(file)
+        image = PIL.Image.open(file)
 
         # Perform the resize, multiplying present dimensions by factor
         width, height = image.size
@@ -205,19 +205,19 @@ def main():
     elif sys.stdin.isatty():
         input_data = [arg.rstrip() for arg in sys.stdin.readlines()]
     else:
-        sys.exit()
+        sys.exit(1)
 
     # Input is required
     if not len(input_data):
         sys.stderr.write(messages["errorNoData"])
         sys.stderr.flush()
-        sys.exit()
+        sys.exit(1)
 
     # Should be even number of items since each file will have resize value
     if len(input_data) % 2 != 0:
         sys.stderr.write(messages["errorNoResize"])
         sys.stderr.flush()
-        sys.exit()
+        sys.exit(1)
 
     try:
         Resizer(input_data, valid_extensions).resize()
@@ -237,7 +237,7 @@ def main():
     finally:
         sys.stdout.flush()
         sys.stderr.flush()
-        sys.exit()
+        sys.exit(1)
 
 
 if __name__ == "__main__":
