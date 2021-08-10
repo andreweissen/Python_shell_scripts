@@ -488,7 +488,8 @@ def log_msg(message_text, text_io=sys.stdout):
     text_io.flush()
 
 
-def should_delete(prompt_message, action_yes="y", action_no="n"):
+def should_delete(prompt_message, action_yes="y", action_no="n",
+                  action_exit="q"):
     """
     The ``should_delete`` utility function serves to prompt the user to enter an
     accepted value that denotes whether or not to proceed with the given
@@ -500,8 +501,10 @@ def should_delete(prompt_message, action_yes="y", action_no="n"):
             displayed with every prompt iteration
         :param action_yes: An optional formal parameter denoting what the user
             should enter to proceed with the operation
-        :param action_no: An optional formal parameter denotign what the user
+        :param action_no: An optional formal parameter denoting what the user
             should enter to not proceed with the operation
+        :param action_exit: An optional formal parameter denoting what the user
+            should enter to exit from the application altogether
         :return: A status boolean is returned that indicates whether the user
             intends to proceed with the deletion operation or not.
     """
@@ -511,10 +514,12 @@ def should_delete(prompt_message, action_yes="y", action_no="n"):
         sys.stdout.flush()
         action = sys.stdin.readline().rstrip()
 
-        if action == action_yes:
+        if action.lower() == action_yes.lower():
             return True
-        elif action == action_no:
+        elif action.lower() == action_no.lower():
             return False
+        elif action.lower() == action_exit.lower():
+            sys.exit(1)
         else:
             continue
 
@@ -567,6 +572,7 @@ def main():
         "eDateFormat": "Error: Improperly formatted deletion date for $1 ($2)",
         "eNotToday": "Error: $1 not up for deletion today ($2)",
         "sLogin": "Success: Logged in via bot password",
+        "sWikitext": "Success: Acquired wikitext markup of $1",
         "sDeletedPage": "Success: Deleted $1",
         "sToday": "Success: $1 is up for deletion today",
         "sComplete": "Success: All operations complete"
@@ -662,6 +668,8 @@ def main():
         try:
             # Grab raw parsed wikitext markup of each page
             wikitext = controller.get_page_content(member)
+
+            log_msg(lang["sWikitext"].replace("$1", member), sys.stdout)
         except (requests.exceptions.HTTPError, json.decoder.JSONDecodeError):
             log_msg(lang["eWikitextAPI"].replace("$1", member), sys.stderr)
             continue
@@ -677,6 +685,7 @@ def main():
         # Log if the deletion date is not found in the template
         if not len(template_contents):
             log_msg(lang["eNoDeletionDate"].replace("$1", member), sys.stderr)
+            time.sleep(interval)
             continue
 
         try:
@@ -686,11 +695,14 @@ def main():
         except ValueError:
             log_msg(lang["eDateFormat"].replace("$1", member)
                     .replace("$2", template_contents[0]), sys.stderr)
+            time.sleep(interval)
 
             # Prompt user to see if we should continue with the deletion anyway
             delete_anyway = should_delete(lang["pContinue"])
             if not delete_anyway:
                 continue
+        finally:
+            time.sleep(interval)
 
         # If the user hasn't opted to delete a page with malformed date...
         if not delete_anyway:
@@ -704,6 +716,8 @@ def main():
             # If it is the date, prompt the user for confirmation
             else:
                 log_msg(lang["sToday"].replace("$1", member))
+                time.sleep(interval)
+
                 if not should_delete(lang["pAreYouSure"]):
                     continue
 
