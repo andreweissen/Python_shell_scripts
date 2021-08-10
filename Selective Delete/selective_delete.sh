@@ -18,8 +18,9 @@ __all__ = [
     "should_delete"
 ]
 __author__ = "Andrew Eissen"
-__version__ = "0.1"
+__version__ = "1.0"
 
+import configparser
 import json.decoder
 import re
 import requests
@@ -693,6 +694,7 @@ def main():
         "eDeleteAPI": "Error: Unable to delete $1 due to query issues",
         "eDeleteUnknown": "Error: Unable to delete $1",
         "iCheckingRev": "Checking revision $1 of \"$2\"...",
+        "iEditSummary": "Author request",
         "sLogin": "Success: Logged in via bot password",
         "sCreator": "Success: Retrieved page creator information for \"$1\"",
         "sRevisions": "Success: Retrieved all edit revisions for \"$1\"",
@@ -701,19 +703,18 @@ def main():
         "sComplete": "Success: All operations complete"
     }
 
-    # Check for either command line args or prompt for manual inclusion
-    if len(sys.argv) > 1:
-        input_data = sys.argv[1:]
-    elif sys.stdin.isatty():
-        log_msg(lang["pIntro"], sys.stdout)
-        input_data = [arg.rstrip() for arg in sys.stdin.readlines()]
-    else:
-        sys.exit(1)
-
-    # Prompt for edit summary
-    sys.stdout.write(lang["pEditSummary"])
-    sys.stdout.flush()
-    edit_summary = sys.stdin.readline().rstrip()
+    try:
+        parser = configparser.ConfigParser()
+        parser.read("settings.ini")
+        input_data = parser["ENV"].values()
+    except KeyError:
+        if len(sys.argv) > 1:
+            input_data = sys.argv[1:]
+        elif sys.stdin.isatty():
+            log_msg(lang["pIntro"], sys.stdout)
+            input_data = [arg.rstrip() for arg in sys.stdin.readlines()]
+        else:
+            sys.exit(1)
 
     # Remove any empty strings from the outset to catch empty input
     input_data = list(filter(None, input_data))
@@ -888,7 +889,7 @@ def main():
 
         try:
             # Attempt to delete the page and log a message if successful
-            if controller.delete_page(member, edit_summary):
+            if controller.delete_page(member, lang["iEditSummary"]):
                 log_msg(lang["sDeletedPage"].replace("$1", member), sys.stdout)
         except (requests.exceptions.HTTPError, json.decoder.JSONDecodeError):
             log_msg(lang["eDeleteAPI"].replace("$1", member), sys.stderr)
