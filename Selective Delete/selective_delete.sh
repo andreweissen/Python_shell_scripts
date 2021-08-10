@@ -704,10 +704,12 @@ def main():
     }
 
     try:
+        # Check if settings.ini file is present
         parser = configparser.ConfigParser()
         parser.read("settings.ini")
         input_data = parser["ENV"].values()
     except KeyError:
+        # Check for either command line args or prompt for manual inclusion
         if len(sys.argv) > 1:
             input_data = sys.argv[1:]
         elif sys.stdin.isatty():
