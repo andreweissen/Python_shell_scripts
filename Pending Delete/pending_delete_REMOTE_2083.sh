@@ -579,22 +579,6 @@ def main():
         "sComplete": "Success: All operations complete"
     }
 
-<<<<<<< HEAD
-    try:
-        # Check if settings.ini file is present
-        parser = configparser.ConfigParser()
-        parser.read("settings.ini")
-        input_data = parser["ENV"].values()
-    except KeyError:
-        # Check for either command line args or prompt for manual inclusion
-        if len(sys.argv) > 1:
-            input_data = sys.argv[1:]
-        elif sys.stdin.isatty():
-            log_msg(lang["pIntro"], sys.stdout)
-            input_data = [arg.rstrip() for arg in sys.stdin.readlines()]
-        else:
-            sys.exit(1)
-=======
     # Check for command line args
     if len(sys.argv) > 1:
         input_data = sys.argv[1:]
@@ -611,7 +595,6 @@ def main():
                 input_data = [arg.rstrip() for arg in sys.stdin.readlines()]
             else:
                 sys.exit(1)
->>>>>>> feature
 
     # Remove any empty strings from the outset to catch empty input
     input_data = list(filter(None, input_data))
