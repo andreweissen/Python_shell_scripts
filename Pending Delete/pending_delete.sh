@@ -572,6 +572,7 @@ def main():
         "eDeleteUnknown": "Error: Unable to delete $1",
         "eDateFormat": "Error: Improperly formatted deletion date for $1 ($2)",
         "eNotToday": "Error: $1 not up for deletion today ($2)",
+        "iEditSummary": "Fails article guidelines",
         "sLogin": "Success: Logged in via bot password",
         "sWikitext": "Success: Acquired wikitext markup of $1",
         "sDeletedPage": "Success: Deleted $1",
@@ -685,8 +686,6 @@ def main():
         except (AssertionError, KeyError):
             log_msg(lang["eWikitextUnknown"].replace("$1", member), sys.stderr)
             continue
-        finally:
-            time.sleep(interval)
 
         # Grab deletion date displayed in transclusions of target template
         template_contents = re.findall(template_regex, wikitext)
@@ -694,7 +693,6 @@ def main():
         # Log if the deletion date is not found in the template
         if not len(template_contents):
             log_msg(lang["eNoDeletionDate"].replace("$1", member), sys.stderr)
-            time.sleep(interval)
             continue
 
         try:
@@ -710,8 +708,6 @@ def main():
             delete_anyway = should_delete(lang["pContinue"])
             if not delete_anyway:
                 continue
-        finally:
-            time.sleep(interval)
 
         # If the user hasn't opted to delete a page with malformed date...
         if not delete_anyway:
@@ -725,14 +721,12 @@ def main():
             # If it is the date, prompt the user for confirmation
             else:
                 log_msg(lang["sToday"].replace("$1", member))
-                time.sleep(interval)
-
                 if not should_delete(lang["pAreYouSure"]):
                     continue
 
         try:
             # Attempt to delete the page and log a message if successful
-            if controller.delete_page(member):
+            if controller.delete_page(member, lang["iEditSummary"]):
                 log_msg(lang["sDeletedPage"].replace("$1", member), sys.stdout)
         except (requests.exceptions.HTTPError, json.decoder.JSONDecodeError):
             log_msg(lang["eDeleteAPI"].replace("$1", member), sys.stderr)
