@@ -11,7 +11,11 @@ ensuring that all new revisions made to Dev code are reflected in the GitHub
 clones as individual commits.
 """
 
-__all__ = []
+__all__ = [
+    "Controller",
+    "log_msg",
+    "prompt_for_value"
+]
 __author__ = "Andrew Eissen"
 __version__ = "1.0"
 
