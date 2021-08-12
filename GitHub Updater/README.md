@@ -1,0 +1,7 @@
+## GitHub Updater ##
+
+__GitHub Updater__ is a [Python](https://en.wikipedia.org/wiki/Python_(programming_language)) [script](https://en.wikipedia.org/wiki/Scripting_language) run as a [shell script](https://en.wikipedia.org/wiki/Shell_script) that assists in automating the upkeep of a mirror repository stored on GitHub that keeps separate track of all revisions made to the production code of the author's flagship JavaScript script, [MassEdit](https://dev.fandom.com/wiki/MassEdit), the live versions of which are stored on the [Fandom Developers Wiki](https://dev.fandom.com/wiki/Fandom_Developers_Wiki).
+
+Originally, the author would manually update the mirror with the individual revisions made to production code by himself or other users. However, on account of the tedious nature of the task, the author would occasionally procrastinate and permit a backlog of revisions to accumulate before finally adding them all to the mirror as separate commits in bulk. 
+
+However, the birth of the GitHub Updater script helped to automate that process via the joint use of the [MediaWiki Action API](https://www.mediawiki.org/wiki/API:Main_page) and [GitHub REST API](https://docs.github.com/en/rest). The script will accept associated credentials and prompt the user to indicate which mirror files to update. With a list of recent revisions made to the production code, the script will add each change to the mirror file as a separate commit, ensuring the two repositories remain up-to-date and sync'd.
