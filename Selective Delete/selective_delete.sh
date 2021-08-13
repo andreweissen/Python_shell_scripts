@@ -668,39 +668,39 @@ def main():
 
     # Collated messages list for display in the console
     lang = {
-        "pIntro": "Enter username, password, link to /api.php, target "
-                  + "template, and deletion category",
-        "pEditSummary": "Enter edit summary: ",
-        "pAreYouSure": "Delete? (y/n): ",
-        "eNoData": "Error: No input data entered",
-        "eMissingData": "Error: Missing input data",
-        "eURL": "Error: URL is malformed or fails to point to /api.php",
-        "eLoginRights": "Error: Insufficient user rights on this wiki",
-        "eLoginUnknown": "Error: Unable to login despite successful query",
-        "eLoginAPI": "Error: Unable to login due to query issues",
-        "eMembersAPI": "Error: Unable to acquire category members due to query "
-                       + "issues",
-        "eMembersUnknown": "Error: Unable to acquire category members",
-        "eCreatorAPI": "Error: Unable to fetch first revision of $1 due to "
+        "p_intro": "Enter username, password, link to /api.php, target "
+                   + "template, and deletion category",
+        "p_edit_summary": "Enter edit summary: ",
+        "p_confirm": "Delete? (y/n): ",
+        "e_no_data": "Error: No input data entered",
+        "e_missing_data": "Error: Missing input data",
+        "e_url": "Error: URL is malformed or fails to point to /api.php",
+        "e_login_rights": "Error: Insufficient user rights on this wiki",
+        "e_login": "Error: Unable to login despite successful query",
+        "e_login_api": "Error: Unable to login due to query issues",
+        "e_members_api": "Error: Unable to acquire category members due to "
+                       + "query issues",
+        "e_members": "Error: Unable to acquire category members",
+        "e_creator_api": "Error: Unable to fetch first revision of $1 due to "
                          + "query issues",
-        "eCreatorUnknown": "Error: Unable to fetch first revision of $1",
-        "eRevisionsAPI": "Error: Unable to fetch revisions of $1 due to query "
-                         + "issues",
-        "eRevisionsUnknown": "Error: Unable to fetch revisions of $1",
-        "eRevisionAPI": "Error: Unable to acquire content of revision $1 due "
-                        + "to query issues",
-        "eRevisionUnknown": "Error: Unable to acquire content of revision $1",
-        "eWrongTagger": "Error: \"$1\" tagged \"$2\", not page creator \"$3\"",
-        "eDeleteAPI": "Error: Unable to delete $1 due to query issues",
-        "eDeleteUnknown": "Error: Unable to delete $1",
-        "iCheckingRev": "Checking revision $1 of \"$2\"...",
-        "iEditSummary": "Author request",
-        "sLogin": "Success: Logged in via bot password",
-        "sCreator": "Success: Retrieved page creator information for \"$1\"",
-        "sRevisions": "Success: Retrieved all edit revisions for \"$1\"",
-        "sCreatorTagged": "Success: Page creator \"$1\" tagged \"$2\"",
-        "sDeletedPage": "Success: Deleted \"$1\"",
-        "sComplete": "Success: All operations complete"
+        "e_creator": "Error: Unable to fetch first revision of $1",
+        "e_revisions_api": "Error: Unable to fetch revisions of $1 due to "
+                         + "query issues",
+        "e_revisions": "Error: Unable to fetch revisions of $1",
+        "e_revision_api": "Error: Unable to acquire content of revision $1 due "
+                          + "to query issues",
+        "e_revision": "Error: Unable to acquire content of revision $1",
+        "e_tagger": "Error: \"$1\" tagged \"$2\", not page creator \"$3\"",
+        "e_delete_api": "Error: Unable to delete $1 due to query issues",
+        "e_delete": "Error: Unable to delete $1",
+        "i_checking_rev": "Checking revision $1 of \"$2\"...",
+        "i_edit_summary": "Author request",
+        "s_login": "Success: Logged in via bot password",
+        "s_creator": "Success: Retrieved page creator information for \"$1\"",
+        "s_revisions": "Success: Retrieved all edit revisions for \"$1\"",
+        "s_creator_tagged": "Success: Page creator \"$1\" tagged \"$2\"",
+        "s_deleted_page": "Success: Deleted \"$1\"",
+        "s_complete": "Success: All operations complete"
     }
 
     # Check for command line args
@@ -715,7 +715,7 @@ def main():
         except KeyError:
             # Prompt for manual inclusion
             if sys.stdin.isatty():
-                log_msg(lang["pIntro"], sys.stdout)
+                log_msg(lang["p_intro"], sys.stdout)
                 input_data = [arg.rstrip() for arg in sys.stdin.readlines()]
             else:
                 sys.exit(1)
@@ -725,7 +725,7 @@ def main():
 
     # Required: username, password, wiki URL, template, category
     if not len(input_data) or len(input_data) < 5:
-        log_msg(lang[("eMissingData", "eNoData")[not len(input_data)]],
+        log_msg(lang[("e_missing_data", "e_no_data")[not len(input_data)]],
                 sys.stderr)
         sys.exit(1)
 
@@ -734,7 +734,7 @@ def main():
 
     # Ensure URL points to valid Fandom wiki's api.php resource
     if not is_fandom_wiki_api_php(wiki_api):
-        log_msg(lang["eURL"], sys.stderr)
+        log_msg(lang["e_url"], sys.stderr)
         sys.exit(1)
 
     # Base definitions
@@ -763,16 +763,16 @@ def main():
         # Determine if user has the rights to delete pages
         can_delete = has_rights(user_data["groups"], usergroups)
         if not can_delete:
-            log_msg(lang["eLoginRights"], sys.stderr)
+            log_msg(lang["e_login_rights"], sys.stderr)
 
     except (requests.exceptions.HTTPError, json.decoder.JSONDecodeError):
-        log_msg(lang["eLoginAPI"], sys.stderr)
+        log_msg(lang["e_login_api"], sys.stderr)
     except (AssertionError, KeyError):
-        log_msg(lang["eLoginUnknown"], sys.stderr)
+        log_msg(lang["e_login"], sys.stderr)
     finally:
         # Only proceed with main script if logged in and in right groups
         if is_logged_in and can_delete:
-            log_msg(lang["sLogin"], sys.stdout)
+            log_msg(lang["s_login"], sys.stdout)
         else:
             sys.exit(1)
 
@@ -789,9 +789,9 @@ def main():
         # Grab members of deletion cat (cat holding pages tagged for deletion)
         category_members = controller.get_category_members(category, interval)
     except (requests.exceptions.HTTPError, json.decoder.JSONDecodeError):
-        log_msg(lang["eMembersAPI"], sys.stderr)
+        log_msg(lang["e_members_api"], sys.stderr)
     except (AssertionError, KeyError):
-        log_msg(lang["eMembersUnknown"], sys.stderr)
+        log_msg(lang["e_members"], sys.stderr)
     finally:
         if not len(category_members):
             sys.exit(1)
@@ -808,14 +808,14 @@ def main():
             # Get dictionary of info pertaining to page creator user
             first_revision = controller.get_first_revision_info(member)
 
-            log_msg(lang["sCreator"].replace("$1", member), sys.stdout)
+            log_msg(lang["s_creator"].replace("$1", member), sys.stdout)
             page_creator = first_revision["user"]
             page_creator_id = first_revision["userid"]
         except (requests.exceptions.HTTPError, json.decoder.JSONDecodeError):
-            log_msg(lang["eCreatorAPI"].replace("$1", member), sys.stderr)
+            log_msg(lang["e_creator_api"].replace("$1", member), sys.stderr)
             continue
         except (AssertionError, KeyError):
-            log_msg(lang["eCreatorUnknown"].replace("$1", member), sys.stderr)
+            log_msg(lang["e_creator"].replace("$1", member), sys.stderr)
             continue
         finally:
             time.sleep(interval)
@@ -823,12 +823,12 @@ def main():
         try:
             # Grab authorship info for all revisions related to member page
             revisions = controller.get_all_revisions(interval, member)
-            log_msg(lang["sRevisions"].replace("$1", member), sys.stdout)
+            log_msg(lang["s_revisions"].replace("$1", member), sys.stdout)
         except (requests.exceptions.HTTPError, json.decoder.JSONDecodeError):
-            log_msg(lang["eRevisionsAPI"].replace("$1", member), sys.stderr)
+            log_msg(lang["e_revisions_api"].replace("$1", member), sys.stderr)
             continue
         except (AssertionError, KeyError):
-            log_msg(lang["eRevisionsUnknown"].replace("$1", member), sys.stderr)
+            log_msg(lang["e_revisions"].replace("$1", member), sys.stderr)
             continue
         finally:
             time.sleep(interval)
@@ -837,7 +837,7 @@ def main():
         for rev in revisions:
             try:
                 # Log message indicating that rev is being checked
-                log_msg(lang["iCheckingRev"].replace("$1", str(rev["revid"]))
+                log_msg(lang["i_checking_rev"].replace("$1", str(rev["revid"]))
                         .replace("$2", member), sys.stderr)
 
                 # Grab all templates and categories present for this revision
@@ -845,11 +845,11 @@ def main():
                     rev["revid"])
             except (requests.exceptions.HTTPError,
                     json.decoder.JSONDecodeError):
-                log_msg(lang["eRevisionAPI"].replace("$1", rev["revid"]),
+                log_msg(lang["e_revision_api"].replace("$1", rev["revid"]),
                         sys.stderr)
                 continue
             except (AssertionError, KeyError):
-                log_msg(lang["eRevisionUnknown"].replace("$1", rev["revid"]),
+                log_msg(lang["e_revision"].replace("$1", rev["revid"]),
                         sys.stderr)
                 continue
             finally:
@@ -874,37 +874,38 @@ def main():
         # If the tagging user is not the page creator...
         if last_editor != page_creator or last_editor_id != page_creator_id:
             # ...log message but do NOT delete page
-            log_msg(lang["eWrongTagger"].replace("$1", last_editor)
+            log_msg(lang["e_tagger"].replace("$1", last_editor)
                     .replace("$2", member).replace("$3", page_creator),
                     sys.stderr)
 
         # If the tagging user is the page creator...
         else:
             # ...log message and proceed with deletion operation
-            log_msg(lang["sCreatorTagged"].replace("$1", page_creator)
+            log_msg(lang["s_creator_tagged"].replace("$1", page_creator)
                     .replace("$2", member), sys.stdout)
 
         # Wait for it...
         time.sleep(interval)
 
         # Prompt user to delete or skip deletion of page
-        if not should_delete(lang["pAreYouSure"]):
+        if not should_delete(lang["p_confirm"]):
             continue
 
         try:
             # Attempt to delete the page and log a message if successful
-            if controller.delete_page(member, lang["iEditSummary"]):
-                log_msg(lang["sDeletedPage"].replace("$1", member), sys.stdout)
+            if controller.delete_page(member, lang["i_edit_summary"]):
+                log_msg(lang["s_deleted_page"].replace("$1", member),
+                        sys.stdout)
         except (requests.exceptions.HTTPError, json.decoder.JSONDecodeError):
-            log_msg(lang["eDeleteAPI"].replace("$1", member), sys.stderr)
+            log_msg(lang["e_delete_api"].replace("$1", member), sys.stderr)
         except (AssertionError, KeyError):
-            log_msg(lang["eDeleteUnknown"].replace("$1", member), sys.stderr)
+            log_msg(lang["e_delete"].replace("$1", member), sys.stderr)
         finally:
             # Pause execution either way for interval to avoid rate limiting
             time.sleep(interval)
 
     # Indicate that operations are all complete
-    log_msg(lang["sComplete"])
+    log_msg(lang["s_complete"])
 
 
 if __name__ == "__main__":

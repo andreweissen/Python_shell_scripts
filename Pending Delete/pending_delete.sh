@@ -551,33 +551,33 @@ def main():
 
     # Collated messages list for display in the console
     lang = {
-        "pIntro": "Enter username, password, link to /api.php, target "
-                  + "template, and deletion category",
-        "pContinue": "Delete anyway? (y/n): ",
-        "pAreYouSure": "Delete? (y/n): ",
-        "eNoData": "Error: No input data entered",
-        "eMissingData": "Error: Missing input data",
-        "eURL": "Error: URL is malformed or fails to point to /api.php",
-        "eLoginUnknown": "Error: Unable to login despite successful query",
-        "eLoginAPI": "Error: Unable to login due to query issues",
-        "eLoginRights": "Error: Insufficient user rights on this wiki",
-        "eMembersAPI": "Error: Unable to acquire category members due to query "
-                       + "issues",
-        "eMembersUnknown": "Error: Unable to acquire category members",
-        "eNoDeletionDate": "Error: No deletion date found in text of $1",
-        "eWikitextAPI": "Error: Unable to acquire wikitext of $1 due to query "
-                        + "query issues",
-        "eWikitextUnknown": "Error: Unable to acquire wikitext of $1",
-        "eDeleteAPI": "Error: Unable to delete $1 due to query issues",
-        "eDeleteUnknown": "Error: Unable to delete $1",
-        "eDateFormat": "Error: Improperly formatted deletion date for $1 ($2)",
-        "eNotToday": "Error: $1 not up for deletion today ($2)",
-        "iEditSummary": "Fails article guidelines",
-        "sLogin": "Success: Logged in via bot password",
-        "sWikitext": "Success: Acquired wikitext markup of $1",
-        "sDeletedPage": "Success: Deleted $1",
-        "sToday": "Success: $1 is up for deletion today",
-        "sComplete": "Success: All operations complete"
+        "p_intro": "Enter username, password, link to /api.php, target "
+                   + "template, and deletion category",
+        "p_continue": "Delete anyway? (y/n): ",
+        "p_confirm": "Delete? (y/n): ",
+        "e_no_data": "Error: No input data entered",
+        "e_missing_data": "Error: Missing input data",
+        "e_url": "Error: URL is malformed or fails to point to /api.php",
+        "e_login": "Error: Unable to login despite successful query",
+        "e_login_api": "Error: Unable to login due to query issues",
+        "e_login_rights": "Error: Insufficient user rights on this wiki",
+        "e_members_api": "Error: Unable to acquire category members due to "
+                       + "query issues",
+        "e_members": "Error: Unable to acquire category members",
+        "e_no_deletion_date": "Error: No deletion date found in text of $1",
+        "e_wikitext_api": "Error: Unable to acquire wikitext of $1 due to "
+                          + "query issues",
+        "e_wikitext": "Error: Unable to acquire wikitext of $1",
+        "e_delete_api": "Error: Unable to delete $1 due to query issues",
+        "e_delete": "Error: Unable to delete $1",
+        "e_date_format": "Error: Malformed deletion date for $1 ($2)",
+        "e_not_today": "Error: $1 not up for deletion today ($2)",
+        "i_edit_summary": "Fails article guidelines",
+        "s_login": "Success: Logged in via bot password",
+        "s_wikitext": "Success: Acquired wikitext markup of $1",
+        "s_deleted_page": "Success: Deleted $1",
+        "s_today": "Success: $1 is up for deletion today",
+        "s_complete": "Success: All operations complete"
     }
 
     # Check for command line args
@@ -592,7 +592,7 @@ def main():
         except KeyError:
             # Prompt for manual inclusion
             if sys.stdin.isatty():
-                log_msg(lang["pIntro"], sys.stdout)
+                log_msg(lang["p_intro"], sys.stdout)
                 input_data = [arg.rstrip() for arg in sys.stdin.readlines()]
             else:
                 sys.exit(1)
@@ -602,7 +602,7 @@ def main():
 
     # Required: username, password, wiki URL, template, category
     if not len(input_data) or len(input_data) < 5:
-        log_msg(lang[("eMissingData", "eNoData")[not len(input_data)]],
+        log_msg(lang[("e_missing_data", "e_no_data")[not len(input_data)]],
                 sys.stderr)
         sys.exit(1)
 
@@ -611,7 +611,7 @@ def main():
 
     # Ensure URL points to valid Fandom wiki's api.php resource
     if not is_fandom_wiki_api_php(wiki_api):
-        log_msg(lang["eURL"], sys.stderr)
+        log_msg(lang["e_url"], sys.stderr)
         sys.exit(1)
 
     # Create new Controller instance for interaction with the API
@@ -639,16 +639,16 @@ def main():
         # Determine if user has the rights to delete pages
         can_delete = has_rights(user_data["groups"], usergroups)
         if not can_delete:
-            log_msg(lang["eLoginRights"], sys.stderr)
+            log_msg(lang["e_login_rights"], sys.stderr)
 
     except (requests.exceptions.HTTPError, json.decoder.JSONDecodeError):
-        log_msg(lang["eLoginAPI"], sys.stderr)
+        log_msg(lang["e_login_api"], sys.stderr)
     except (AssertionError, KeyError):
-        log_msg(lang["eLoginUnknown"], sys.stderr)
+        log_msg(lang["e_login"], sys.stderr)
     finally:
         # Only proceed with main script if logged in and in right groups
         if is_logged_in and can_delete:
-            log_msg(lang["sLogin"], sys.stdout)
+            log_msg(lang["s_login"], sys.stdout)
         else:
             sys.exit(1)
 
@@ -665,9 +665,9 @@ def main():
         # Grab members of deletion cat (cat holding pages marked for deletion)
         category_members = controller.get_category_members(category, interval)
     except (requests.exceptions.HTTPError, json.decoder.JSONDecodeError):
-        log_msg(lang["eMembersAPI"], sys.stderr)
+        log_msg(lang["e_members_api"], sys.stderr)
     except (AssertionError, KeyError):
-        log_msg(lang["eMembersUnknown"], sys.stderr)
+        log_msg(lang["e_members"], sys.stderr)
     finally:
         if not len(category_members):
             sys.exit(1)
@@ -679,12 +679,12 @@ def main():
             # Grab raw parsed wikitext markup of each page
             wikitext = controller.get_page_content(member)
 
-            log_msg(lang["sWikitext"].replace("$1", member), sys.stdout)
+            log_msg(lang["s_wikitext"].replace("$1", member), sys.stdout)
         except (requests.exceptions.HTTPError, json.decoder.JSONDecodeError):
-            log_msg(lang["eWikitextAPI"].replace("$1", member), sys.stderr)
+            log_msg(lang["e_wikitext_api"].replace("$1", member), sys.stderr)
             continue
         except (AssertionError, KeyError):
-            log_msg(lang["eWikitextUnknown"].replace("$1", member), sys.stderr)
+            log_msg(lang["e_wikitext"].replace("$1", member), sys.stderr)
             continue
 
         # Grab deletion date displayed in transclusions of target template
@@ -692,7 +692,8 @@ def main():
 
         # Log if the deletion date is not found in the template
         if not len(template_contents):
-            log_msg(lang["eNoDeletionDate"].replace("$1", member), sys.stderr)
+            log_msg(lang["e_no_deletion_date"].replace("$1", member),
+                    sys.stderr)
             continue
 
         try:
@@ -700,12 +701,12 @@ def main():
             deletion_date = date_format.format(dt=datetime.datetime.strptime(
                 template_contents[0], parse_format))
         except ValueError:
-            log_msg(lang["eDateFormat"].replace("$1", member)
+            log_msg(lang["e_date_format"].replace("$1", member)
                     .replace("$2", template_contents[0]), sys.stderr)
             time.sleep(interval)
 
             # Prompt user to see if we should continue with the deletion anyway
-            delete_anyway = should_delete(lang["pContinue"])
+            delete_anyway = should_delete(lang["p_continue"])
             if not delete_anyway:
                 continue
 
@@ -714,30 +715,31 @@ def main():
 
             # ...check if today is the day on which the page should be deleted
             if deletion_date != date_format.format(dt=datetime.datetime.now()):
-                log_msg(lang["eNotToday"].replace("$1", member)
+                log_msg(lang["e_not_today"].replace("$1", member)
                         .replace("$2", deletion_date), sys.stderr)
                 continue
 
             # If it is the date, prompt the user for confirmation
             else:
-                log_msg(lang["sToday"].replace("$1", member))
-                if not should_delete(lang["pAreYouSure"]):
+                log_msg(lang["s_today"].replace("$1", member))
+                if not should_delete(lang["p_confirm"]):
                     continue
 
         try:
             # Attempt to delete the page and log a message if successful
-            if controller.delete_page(member, lang["iEditSummary"]):
-                log_msg(lang["sDeletedPage"].replace("$1", member), sys.stdout)
+            if controller.delete_page(member, lang["i_edit_summary"]):
+                log_msg(lang["s_deleted_page"].replace("$1", member),
+                        sys.stdout)
         except (requests.exceptions.HTTPError, json.decoder.JSONDecodeError):
-            log_msg(lang["eDeleteAPI"].replace("$1", member), sys.stderr)
+            log_msg(lang["e_delete_api"].replace("$1", member), sys.stderr)
         except (AssertionError, KeyError):
-            log_msg(lang["eDeleteUnknown"].replace("$1", member), sys.stderr)
+            log_msg(lang["e_delete"].replace("$1", member), sys.stderr)
         finally:
             # Pause execution either way for interval to avoid rate limiting
             time.sleep(interval)
 
     # Indicate that operations are all complete
-    log_msg(lang["sComplete"])
+    log_msg(lang["s_complete"])
 
 
 if __name__ == "__main__":
