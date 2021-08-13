@@ -191,12 +191,12 @@ def main():
     # Initial definitions
     valid_extensions = ["png", "jpg", "jpeg", "PNG", "JPG"]
     messages = {
-        "errorNoData": "Error: No data entered",
-        "errorNoResize": "Error: Each file name must have a resize value",
-        "errorResizeNotInt": "Error: Resize factor must be an int",
-        "errorVal": "Error: Files must have legitimate extensions and factors",
-        "errorUnableToOpen": "Error: Unable to open file(s)",
-        "successResized": "Success: All resizes complete"
+        "e_no_data": "Error: No data entered",
+        "e_no_resize": "Error: Each file name must have a resize value",
+        "e_resize_not_int": "Error: Resize factor must be an int",
+        "e_value": "Error: Files must have legitimate extensions and factors",
+        "e_unable_to_open": "Error: Unable to open file(s)",
+        "s_resized": "Success: All resizes complete"
     }
 
     # Grab command line arguments or prompt user for input in the console
@@ -209,31 +209,31 @@ def main():
 
     # Input is required
     if not len(input_data):
-        sys.stderr.write(messages["errorNoData"])
+        sys.stderr.write(messages["e_no_data"])
         sys.stderr.flush()
         sys.exit(1)
 
     # Should be even number of items since each file will have resize value
     if len(input_data) % 2 != 0:
-        sys.stderr.write(messages["errorNoResize"])
+        sys.stderr.write(messages["e_no_resize"])
         sys.stderr.flush()
         sys.exit(1)
 
     try:
         Resizer(input_data, valid_extensions).resize()
-        sys.stdout.write(messages["successResized"])
+        sys.stdout.write(messages["s_resized"])
 
     # Thrown by _format_input if factor is not expressible as an int
     except TypeError:
-        sys.stderr.write(messages["errorResizeNotInt"])
+        sys.stderr.write(messages["e_resize_not_int"])
 
     # Thrown by _subdivide_file if filename has no supported extension
     except ValueError:
-        sys.stderr.write(messages["errorVal"])
+        sys.stderr.write(messages["e_value"])
 
     # Thrown by _resize if the file cannot be opened by PIL.Image.open
     except IOError:
-        sys.stderr.write(messages["errorUnableToOpen"])
+        sys.stderr.write(messages["e_unable_to_open"])
     finally:
         sys.stdout.flush()
         sys.stderr.flush()
