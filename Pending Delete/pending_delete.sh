@@ -46,7 +46,7 @@ class Controller:
                 constructor.
         """
 
-        if isinstance(session, type(None)):
+        if session is None:
             session = requests.Session()
 
         self.api_php = api_php
@@ -111,7 +111,7 @@ class Controller:
         """
 
         # If something other than list is passed, raise AssertionError
-        assert (isinstance(category, str))
+        assert(isinstance(category, str))
 
         # wgFormattedNamespaces[14]
         prefix = "Category:"
@@ -181,11 +181,10 @@ class Controller:
         data = request.json()
 
         # May throw AssertionError
-        assert ("errors" not in data)
+        assert("errors" not in data)
 
         # May throw KeyError
-        for member in data["query"]["categorymembers"]:
-            members.append(member["title"])
+        members += [cm["title"] for cm in data["query"]["categorymembers"]]
 
         # If there are more members than can be retrieved in one call...
         if "query-continue" in data:
@@ -226,7 +225,7 @@ class Controller:
         data = request.json()
 
         # May throw AssertionError
-        assert ("errors" not in data)
+        assert("errors" not in data)
 
         # May throw KeyError
         token = data["query"]["tokens"]["csrftoken"]
@@ -257,7 +256,7 @@ class Controller:
         data = request.json()
 
         # May throw AssertionError
-        assert ("errors" not in data)
+        assert("errors" not in data)
 
         # May throw KeyError
         token = data["query"]["tokens"]["logintoken"]
@@ -291,7 +290,7 @@ class Controller:
         data = request.json()
 
         # May throw AssertionError
-        assert ("errors" not in data)
+        assert("errors" not in data)
 
         # May throw KeyError
         content = data["parse"]["wikitext"]["*"]
@@ -325,7 +324,7 @@ class Controller:
         data = request.json()
 
         # May throw AssertionError
-        assert ("errors" not in data)
+        assert("errors" not in data)
 
         # May throw KeyError
         limits = data["query"]["userinfo"]["ratelimits"]["edit"]["user"]
@@ -362,7 +361,7 @@ class Controller:
         data = request.json()
 
         # May throw AssertionError
-        assert ("errors" not in data)
+        assert("errors" not in data)
 
         # May throw KeyError
         user = data["query"]["users"][0]
@@ -403,7 +402,7 @@ class Controller:
         data = request.json()
 
         # May throw AssertionError
-        assert ("errors" not in data)
+        assert("errors" not in data)
 
         # May throw KeyError
         is_successful = data["login"]["result"] == "Success"
@@ -586,8 +585,7 @@ def main():
     else:
         try:
             # Check if settings.ini file is present
-            parser = configparser.ConfigParser()
-            parser.read("settings.ini")
+            (parser := configparser.ConfigParser()).read("settings.ini")
             input_data = parser["ENV"].values()
         except KeyError:
             # Prompt for manual inclusion
@@ -637,8 +635,7 @@ def main():
         user_data = controller.get_user_data(username)
 
         # Determine if user has the rights to delete pages
-        can_delete = has_rights(user_data["groups"], usergroups)
-        if not can_delete:
+        if not (can_delete := has_rights(user_data["groups"], usergroups)):
             log_msg(lang["e_login_rights"], sys.stderr)
 
     except (requests.exceptions.HTTPError, json.decoder.JSONDecodeError):
@@ -706,8 +703,7 @@ def main():
             time.sleep(interval)
 
             # Prompt user to see if we should continue with the deletion anyway
-            delete_anyway = should_delete(lang["p_continue"])
-            if not delete_anyway:
+            if not (delete_anyway := should_delete(lang["p_continue"])):
                 continue
 
         # If the user hasn't opted to delete a page with malformed date...

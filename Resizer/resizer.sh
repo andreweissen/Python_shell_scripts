@@ -29,7 +29,7 @@ class Resizer:
                 such as ``png`` and ``jpg``.
         """
 
-        if isinstance(extensions, type(None)):
+        if extensions is None:
             extensions = ["jpg", "png"]
 
         self.extensions = extensions
@@ -78,11 +78,7 @@ class Resizer:
         """
 
         # Ensure each filename and resize value are coupled together in a list
-        ordered_pairs = []
-        for i in range(0, len(data), 2):
-            ordered_pairs.append(data[i:i + 2])
-
-        for pair in ordered_pairs:
+        for pair in (pairs := [data[i:i + 2] for i in range(0, len(data), 2)]):
 
             # Break filename into list of name and extension
             pair[0] = self._subdivide_file(pair[0])
@@ -94,7 +90,7 @@ class Resizer:
             if pair[1] > 100:
                 pair[1] = 100
 
-        return ordered_pairs
+        return pairs
 
     def resize(self):
         """
@@ -128,11 +124,8 @@ class Resizer:
             :return: None
         """
 
-        # Join two-element list back into single string
-        file = "".join(path)
-
         # May throw IOError for main to catch
-        image = PIL.Image.open(file)
+        image = PIL.Image.open((file := "".join(path)))
 
         # Perform the resize, multiplying present dimensions by factor
         width, height = image.size

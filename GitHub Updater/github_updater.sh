@@ -49,7 +49,7 @@ class Controller:
                 constructor.
         """
 
-        if isinstance(session, type(None)):
+        if session is None:
             session = requests.Session()
 
         self.api_php = api_php
@@ -118,10 +118,10 @@ class Controller:
         data = request.json()
 
         # May throw AssertionError
-        assert ("errors" not in data)
+        assert("errors" not in data)
 
         # May throw KeyError
-        revisions = revisions + data["query"]["pages"][0]["revisions"]
+        revisions += data["query"]["pages"][0]["revisions"]
 
         # If there are more revisions than can be retrieved in one call...
         if "continue" in data:
@@ -195,7 +195,7 @@ class Controller:
         data = request.json()
 
         # May throw AssertionError
-        assert ("errors" not in data)
+        assert("errors" not in data)
 
         # May throw KeyError
         token = data["query"]["tokens"]["logintoken"]
@@ -229,7 +229,7 @@ class Controller:
         data = request.json()
 
         # May throw AssertionError
-        assert ("errors" not in data)
+        assert("errors" not in data)
 
         # May throw KeyError
         limits = data["query"]["userinfo"]["ratelimits"]["edit"]["user"]
@@ -264,7 +264,7 @@ class Controller:
         data = request.json()
 
         # May throw AssertionError
-        assert ("errors" not in data)
+        assert("errors" not in data)
 
         # May throw KeyError
         content = data["parse"]["wikitext"]["*"]
@@ -302,7 +302,7 @@ class Controller:
         data = request.json()
 
         # May throw AssertionError
-        assert ("errors" not in data)
+        assert("errors" not in data)
 
         # May throw KeyError
         is_successful = data["login"]["result"] == "Success"
@@ -452,8 +452,7 @@ def main():
 
     try:
         # Check if settings.ini file is present
-        parser = configparser.ConfigParser()
-        parser.read("settings.ini")
+        (parser := configparser.ConfigParser()).read("settings.ini")
         input_data = parser["DEFAULT"].values()
     except KeyError:
         # Check for command line args or prompt for manual inclusion
@@ -538,7 +537,7 @@ def main():
     # Should never be encountered, but just in case...
     if not len(revisions):
         log_msg(lang["e_no_revisions"], sys.stderr)
-        return
+        sys.exit(1)
 
     try:
         # Retrieve message formatted as "Special:Diff/123456"
@@ -576,7 +575,7 @@ def main():
 
     if not len(add_these_revisions):
         log_msg(lang["e_up_to_date"], sys.stderr)
-        return
+        sys.exit(1)
 
     # For all revisions that haven't been added to GitHub, start with oldest,...
     for revid in add_these_revisions:
