@@ -66,7 +66,7 @@ class Retuner:
 
         sound = pydub.AudioSegment.from_file(self.path, format="wav")
         new_sound = sound._spawn(sound.raw_data, overrides={
-            "frame_rate": int(sound.frame_rate * (2.0 ** self.steps / 12.0))
+            "frame_rate": int(sound.frame_rate * (2.0 ** (self.steps / 12.0)))
         })
         new_sound = new_sound.set_frame_rate(self.sample_rate)
         new_sound.export(f"{self.file_name}_{self.steps}.wav", format="wav")
