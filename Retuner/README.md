@@ -1,0 +1,3 @@
+## Retuner ##
+
+__Retuner__ is a [Python](https://en.wikipedia.org/wiki/Python_(programming_language)) [script](https://en.wikipedia.org/wiki/Scripting_language) run as a [shell script](https://en.wikipedia.org/wiki/Shell_script) that serves to adjust the pitch of a provided audio file by a certain semitonal interval or both the pitch and playback speed in tandem, creating a new `.wav` file in the process. The script most notably makes use of the [pydub](https://github.com/jiaaro/pydub) and [librosa](https://librosa.org/doc/latest/index.html#) Python libraries for undertaking the pitch adjustment process.
