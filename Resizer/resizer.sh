@@ -7,12 +7,12 @@ directory under new names for ease of access. The author includes the script in
 his Pictures folder and invokes it in the Git Bash shell.
 """
 
-__all__ = ["Resizer"]
+__all__ = ["Resizer", "log_msg"]
 __author__ = "Andrew Eissen"
-__version__ = "0.1"
+__version__ = "1.0"
 
-import sys
 import PIL.Image
+import sys
 
 
 class Resizer:
@@ -170,6 +170,23 @@ class Resizer:
         return subdivided_file
 
 
+def log_msg(message_text, text_io=sys.stdout):
+    """
+    The ``log_msg`` function is simply used to log a message in the console
+    (expected) using either the ``sys.stdout`` or ``sys.stderr`` text IOs. It
+    was intended to behavior much alike to the default ``print`` function but
+    with a little more stylistic control.
+        :param message_text: A string representing the intended message to print
+            to the text IO
+        :param text_io: An optional parameter denoting which text IO to which to
+            print the ``message_text``. By default, this is ``sys.stdout``.
+        :return: None
+    """
+
+    text_io.write(f"{message_text}\n")
+    text_io.flush()
+
+
 def main():
     """
     In accordance with convention, the ``main`` function serves simply to
@@ -183,7 +200,7 @@ def main():
 
     # Initial definitions
     valid_extensions = ["png", "jpg", "jpeg", "PNG", "JPG"]
-    messages = {
+    lang = {
         "e_no_data": "Error: No data entered",
         "e_no_resize": "Error: Each file name must have a resize value",
         "e_resize_not_int": "Error: Resize factor must be an int",
@@ -202,34 +219,30 @@ def main():
 
     # Input is required
     if not len(input_data):
-        sys.stderr.write(messages["e_no_data"])
-        sys.stderr.flush()
+        log_msg(lang["e_no_data"], sys.stderr)
         sys.exit(1)
 
     # Should be even number of items since each file will have resize value
     if len(input_data) % 2 != 0:
-        sys.stderr.write(messages["e_no_resize"])
-        sys.stderr.flush()
+        log_msg(lang["e_no_resize"], sys.stderr)
         sys.exit(1)
 
     try:
         Resizer(input_data, valid_extensions).resize()
-        sys.stdout.write(messages["s_resized"])
+        log_msg(lang["s_resized"], sys.stdout)
 
     # Thrown by _format_input if factor is not expressible as an int
     except TypeError:
-        sys.stderr.write(messages["e_resize_not_int"])
+        log_msg(lang["e_resize_not_int"], sys.stderr)
 
     # Thrown by _subdivide_file if filename has no supported extension
     except ValueError:
-        sys.stderr.write(messages["e_value"])
+        log_msg(lang["e_value"], sys.stderr)
 
     # Thrown by _resize if the file cannot be opened by PIL.Image.open
     except IOError:
-        sys.stderr.write(messages["e_unable_to_open"])
+        log_msg(lang["e_unable_to_open"], sys.stderr)
     finally:
-        sys.stdout.flush()
-        sys.stderr.flush()
         sys.exit(1)
 
 
