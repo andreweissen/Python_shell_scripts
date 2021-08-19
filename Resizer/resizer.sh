@@ -16,7 +16,6 @@ import sys
 
 
 class Resizer:
-
     def __init__(self, data, extensions=None):
         """
         The ``Resizer`` class abstracts and compartmentalizes all the
@@ -29,11 +28,63 @@ class Resizer:
                 such as ``png`` and ``jpg``.
         """
 
-        if extensions is None:
-            extensions = ["jpg", "png"]
-
         self.extensions = extensions
-        self.data = self._format_input(data)
+        self.data = data
+
+    @property
+    def extensions(self):
+        """
+        This function serves as the primary property "getter" function used to
+        externally access the ``extensions`` instance attribute. It simply
+        returns the value of the attribute in question.
+            :return: The internal "private" object attribute endemic to the
+                class instance
+        """
+
+        return self._extensions
+
+    @extensions.setter
+    def extensions(self, value):
+        """
+        This function serves as the primary property "setter" function used to
+        externally set/reset new values for the ``extensions`` instance
+        attribute. It simply applies the new value to the attribute in question.
+        If the supplied value is ``None``, a default new list of permissible
+        extensions is created and applied as the value.
+            :param value: The value to be applied to the "private" class
+                instance attribute
+            :return: None
+        """
+
+        if value is None:
+            value = ["jpg", "png"]
+        self._extensions = value
+
+    @property
+    def data(self):
+        """
+        This function serves as the primary property "getter" function used to
+        externally access the ``data`` instance attribute. It simply returns
+        the value of the attribute in question.
+            :return: The internal "private" object attribute endemic to the
+                class instance
+        """
+
+        return self._data
+
+    @data.setter
+    def data(self, value):
+        """
+        This function serves as the primary property "setter" function used to
+        externally set/reset new values for the ``data`` instance attribute. It
+        simply applies the new value to the attribute in question, calling the
+        private ``_format_input`` helper function to format the input.
+            :param value: The value to be applied to the "private" class
+                instance attribute
+            :return: None
+        """
+
+        self._data = self._format_input(value)
 
     @staticmethod
     def _format_filename(file, ext, width, height):

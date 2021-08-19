@@ -46,11 +46,62 @@ class Controller:
                 constructor.
         """
 
-        if session is None:
-            session = requests.Session()
-
         self.api_php = api_php
         self.session = session
+
+    @property
+    def api_php(self):
+        """
+        This function serves as the primary property "getter" function used to
+        externally access the ``_api_php`` instance attribute. It simply returns
+        the value of the attribute in question.
+            :return: The internal "private" object attribute endemic to the
+                class instance
+        """
+
+        return self._api_php
+
+    @api_php.setter
+    def api_php(self, value):
+        """
+        This function serves as the primary property "setter" function used to
+        externally set/reset new values for the ``api_php`` instance attribute.
+        It simply applies the new value to the attribute in question.
+            :param value: The value to be applied to the "private" class
+                instance attribute
+            :return: None
+        """
+
+        self._api_php = value
+
+    @property
+    def session(self):
+        """
+        This function serves as the primary property "getter" function used to
+        externally access the ``session`` instance attribute. It simply returns
+        the value of the attribute in question.
+            :return: The internal "private" object attribute endemic to the
+                class instance
+        """
+
+        return self._session
+
+    @session.setter
+    def session(self, value):
+        """
+        This function serves as the primary property "setter" function used to
+        externally set/reset new values for the ``session`` instance attribute.
+        It simply applies the new value to the attribute in question. If the
+        supplied value is ``None``, a default new ``requests.Session`` is
+        created and applied as the value.
+            :param value: The value to be applied to the "private" class
+                instance attribute
+            :return: None
+        """
+
+        if value is None:
+            value = requests.Session()
+        self._session = value
 
     def delete_page(self, page, reason=""):
         """
